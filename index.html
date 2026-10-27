@@ -55,6 +55,8 @@ header { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bo
 .buscar:focus { border-color: var(--ink); }
 
 .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 56px 12px; padding-bottom: 96px; }
+.linea-titulo { grid-column: 1 / -1; font-weight: 400; font-size: 18px; padding-bottom: 14px; margin-bottom: -26px; border-bottom: 1px solid var(--line); }
+.linea-titulo:not(:first-child) { margin-top: 24px; }
 .card { display: flex; flex-direction: column; text-align: center; }
 .card-img { aspect-ratio: 1; background: var(--surface); display: grid; place-items: center; overflow: hidden; }
 .card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
@@ -210,8 +212,8 @@ const normNombre = s => String(s || '').toLowerCase().normalize('NFD').replace(/
 const prodById = id => productos.find(p => p.id === id);
 // Precio por caja: se vende por caja entera; si falta m²/caja se toma 1 m²
 const precioCaja = p => (p.precio_m2 || 0) * (p.m2_por_caja || 1);
-// Categoría = primer tramo de la descripción ("Porcelanato · pieza 22x145 mm · …")
-const lineaDe = p => (p.descripcion || '').split('·')[0].trim() || 'Otros';
+// Línea asignada en la app (ej. "Stackbond"); si no tiene, el primer tramo de la descripción ("Porcelanato · pieza …")
+const lineaDe = p => (p.linea || '').trim() || (p.descripcion || '').split('·')[0].trim() || 'Otros';
 
 function guardarCarrito() {
   try { localStorage.setItem('b2-carrito', JSON.stringify(carrito)); } catch (e) {}
@@ -252,28 +254,36 @@ function render() {
   const q = normNombre($('buscar').value);
   const lista = productos.filter(p =>
     (lineaActiva === 'Todos' || lineaDe(p) === lineaActiva) &&
-    (!q || normNombre(p.nombre + ' ' + (p.sku || '') + ' ' + (p.descripcion || '')).includes(q))
+    (!q || normNombre(p.nombre + ' ' + (p.sku || '') + ' ' + lineaDe(p) + ' ' + (p.descripcion || '')).includes(q))
   );
   if (!productos.length) { $('grid').innerHTML = '<div class="estado">Estamos cargando el catálogo. Escribinos por WhatsApp y te pasamos la lista de precios.</div>'; return; }
   if (!lista.length) { $('grid').innerHTML = '<div class="estado">No encontramos productos con ese filtro.</div>'; return; }
-  $('grid').innerHTML = lista.map(p => {
-    const cant = carrito[p.id] || 0;
-    const medidas = [p.medida_pieza && 'Pieza ' + p.medida_pieza, p.medida_malla && 'Malla ' + p.medida_malla].filter(Boolean).join(' · ');
-    const caja = [p.m2_por_caja && p.m2_por_caja + ' m²/caja', p.piezas_por_caja && p.piezas_por_caja + ' mallas'].filter(Boolean).join(' · ');
-    return `<article class="card">
-      <div class="card-img">${p.foto ? `<img src="${p.foto}" alt="${esc(p.nombre)}" loading="lazy" />` : '<img class="card-img-vacia" src="logo.svg" alt="" />'}</div>
-      <div class="card-body">
-        <div class="card-linea">${esc(p.sku || lineaDe(p))}</div>
-        <div class="card-nombre">${esc(p.nombre.replace(p.sku || '\u0000', '').trim())}</div>
-        ${medidas ? `<div class="card-detalle">${esc(medidas)}</div>` : ''}
-        ${caja ? `<div class="card-detalle">${esc(caja)}</div>` : ''}
-        <div class="card-meta">
-          <span class="precio">${p.precio_m2 ? pesos(p.precio_m2) + ' <small>/ m²</small>' : 'Consultar'}</span>
-        </div>
-        ${cant ? controlCantidad(p.id, cant) : `<button class="agregar" onclick="cambiar('${p.id}',1)">Agregar caja</button>`}
+  // En "Todos" sin búsqueda, los productos van agrupados por línea con su título
+  const agrupar = lineaActiva === 'Todos' && !q && new Set(lista.map(lineaDe)).size > 1;
+  const lineas = agrupar ? [...new Set(lista.map(lineaDe))] : [null];
+  $('grid').innerHTML = lineas.map(l =>
+    (l ? `<h2 class="linea-titulo mono">${esc(l)}</h2>` : '') +
+    lista.filter(p => !l || lineaDe(p) === l).map(tarjeta).join('')
+  ).join('');
+}
+
+function tarjeta(p) {
+  const cant = carrito[p.id] || 0;
+  const medidas = [p.medida_pieza && 'Pieza ' + p.medida_pieza, p.medida_malla && 'Malla ' + p.medida_malla].filter(Boolean).join(' · ');
+  const caja = [p.m2_por_caja && p.m2_por_caja + ' m²/caja', p.piezas_por_caja && p.piezas_por_caja + ' mallas'].filter(Boolean).join(' · ');
+  return `<article class="card">
+    <div class="card-img">${p.foto ? `<img src="${p.foto}" alt="${esc(p.nombre)}" loading="lazy" />` : '<img class="card-img-vacia" src="logo.svg" alt="" />'}</div>
+    <div class="card-body">
+      <div class="card-linea">${esc(p.sku || lineaDe(p))}</div>
+      <div class="card-nombre">${esc(p.nombre.replace(p.sku || '\u0000', '').trim())}</div>
+      ${medidas ? `<div class="card-detalle">${esc(medidas)}</div>` : ''}
+      ${caja ? `<div class="card-detalle">${esc(caja)}</div>` : ''}
+      <div class="card-meta">
+        <span class="precio">${p.precio_m2 ? pesos(p.precio_m2) + ' <small>/ m²</small>' : 'Consultar'}</span>
       </div>
-    </article>`;
-  }).join('');
+      ${cant ? controlCantidad(p.id, cant) : `<button class="agregar" onclick="cambiar('${p.id}',1)">Agregar caja</button>`}
+    </div>
+  </article>`;
 }
 
 // ── CARRITO ───────────────────────────────────────────────────
