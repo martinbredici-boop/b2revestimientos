@@ -83,7 +83,7 @@ header { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bo
 .card-img { aspect-ratio: 1; background: var(--surface); display: grid; place-items: center; overflow: hidden; }
 .card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
 .card:hover .card-img img { transform: scale(1.03); }
-.card-img-vacia { width: 45%; opacity: .25; }
+.card-img .card-img-vacia, .ficha-img .card-img-vacia { width: 45%; height: auto; opacity: .25; transform: none; }
 .card-body { padding: 18px 8px 0; display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
 .card-linea { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 .card-nombre { font-weight: 500; font-size: 16px; }
@@ -122,10 +122,12 @@ header { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bo
 .btn-wa:disabled { opacity: .35; cursor: not-allowed; }
 
 /* Footer */
-footer { border-top: 1px solid var(--line); padding: 40px 0; font-size: 12px; }
-footer .wrap { display: flex; flex-wrap: wrap; gap: 20px 40px; justify-content: space-between; align-items: center; }
-footer img { height: 24px; }
-footer a:hover { text-decoration: underline; }
+footer { border-top: 1px solid var(--line); padding: 48px 0; font-size: 12px; }
+footer .wrap { display: grid; grid-template-columns: auto 1fr 1.4fr 1fr; gap: 28px 48px; align-items: start; }
+footer img { height: 28px; }
+footer h3 { font-size: 11px; font-weight: 400; color: var(--muted); margin-bottom: 8px; }
+footer .col { display: flex; flex-direction: column; gap: 4px; }
+footer a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 .wa-flotante { position: fixed; right: 18px; bottom: 18px; width: 54px; height: 54px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 6px 20px rgba(0,0,0,.15); z-index: 30; }
 
@@ -201,6 +203,8 @@ a.card-img, .card-nombre a { cursor: pointer; }
   .galeria { width: 100%; max-width: 420px; }
   .ficha-info { border-left: 0; padding-left: 0; }
   .ficha-acciones { max-width: none; }
+  footer { padding-bottom: 96px; }
+  footer .wrap { grid-template-columns: 1fr; gap: 24px; }
   .galeria { grid-template-columns: 1fr; }
   .miniaturas { flex-direction: row; order: 2; overflow-x: auto; }
   .miniaturas button { flex: 0 0 56px; }
@@ -274,10 +278,21 @@ a.card-img, .card-nombre a { cursor: pointer; }
 <footer id="contacto">
   <div class="wrap mono">
     <img src="logo.svg" alt="B2" />
-    <a id="footer-wa" href="#" target="_blank" rel="noopener"></a>
-    <a href="https://www.instagram.com/b2revestimientos" target="_blank" rel="noopener">Instagram @b2revestimientos</a>
-    <span>Pedidos por WhatsApp</span>
-    <span>Precios en pesos, sujetos a confirmación</span>
+    <div class="col">
+      <h3>Contacto</h3>
+      <a id="footer-wa" href="#" target="_blank" rel="noopener"></a>
+      <a href="https://www.instagram.com/b2revestimientos" target="_blank" rel="noopener">Instagram @b2revestimientos</a>
+    </div>
+    <div class="col">
+      <h3>Showroom y depósito</h3>
+      <a href="https://maps.app.goo.gl/ZRgabWKVixvrAUGQ8" target="_blank" rel="noopener">Camino del Buen Ayre 4600<br />José León Suárez, Buenos Aires</a>
+      <a href="https://maps.app.goo.gl/ZRgabWKVixvrAUGQ8" target="_blank" rel="noopener" style="color: var(--muted)">Ver en Google Maps →</a>
+    </div>
+    <div class="col">
+      <h3>Pedidos</h3>
+      <span>Por WhatsApp</span>
+      <span>Precios en pesos, sujetos a confirmación</span>
+    </div>
   </div>
 </footer>
 
