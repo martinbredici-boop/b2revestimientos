@@ -130,7 +130,7 @@ footer a:hover { text-decoration: underline; }
 .wa-flotante { position: fixed; right: 18px; bottom: 18px; width: 54px; height: 54px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 6px 20px rgba(0,0,0,.15); z-index: 30; }
 
 /* Sobre nosotros: texto a la izquierda, slider de obras a la derecha */
-.nosotros { border-top: 1px solid var(--line); padding: 88px 0 96px; }
+.nosotros { border-bottom: 1px solid var(--line); padding: 88px 0 96px; }
 .nosotros-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 64px; align-items: start; }
 .nosotros h2 { font-size: clamp(26px, 4vw, 36px); font-weight: 500; margin-bottom: 28px; }
 .nosotros .lema { font-size: clamp(20px, 2.4vw, 26px); line-height: 1.3; font-weight: 500; margin-bottom: 24px; }
@@ -170,11 +170,11 @@ footer a:hover { text-decoration: underline; }
     <button class="menu-btn" onclick="abrirMenu()" aria-label="Abrir menú"><span></span><span></span><span></span></button>
     <a class="logo" href="./" aria-label="B2 Revestimientos"><img src="logo.svg" alt="B2" /></a>
     <nav class="nav-links mono">
+      <a href="#nosotros">Sobre nosotros</a>
       <div class="nav-item">
         <a href="#catalogo" onclick="irALinea('Todos')">Productos</a>
         <div class="submenu" id="submenu-lineas"></div>
       </div>
-      <a href="#nosotros">Sobre nosotros</a>
       <a href="#contacto">Contacto</a>
     </nav>
     <button class="cart-btn mono" onclick="abrirCarrito()" aria-label="Ver pedido">
@@ -190,15 +190,6 @@ footer a:hover { text-decoration: underline; }
     <a class="hero-cta mono" href="#catalogo">Ver productos</a>
   </div>
 </section>
-
-<main class="wrap" id="catalogo">
-  <h1 class="titulo mono">Productos</h1>
-  <div class="filtros">
-    <div class="chips" id="chips"></div>
-    <input class="buscar" id="buscar" type="search" placeholder="Buscar modelo o código" oninput="render()" />
-  </div>
-  <div class="grid" id="grid"><div class="estado">Cargando catálogo…</div></div>
-</main>
 
 <section class="nosotros" id="nosotros">
   <div class="wrap nosotros-grid">
@@ -224,6 +215,16 @@ footer a:hover { text-decoration: underline; }
     </div>
   </div>
 </section>
+
+<main class="wrap" id="catalogo">
+  <h1 class="titulo mono">Productos</h1>
+  <div class="filtros">
+    <div class="chips" id="chips"></div>
+    <input class="buscar" id="buscar" type="search" placeholder="Buscar modelo o código" oninput="render()" />
+  </div>
+  <div class="grid" id="grid"><div class="estado">Cargando catálogo…</div></div>
+</main>
+
 
 <footer id="contacto">
   <div class="wrap mono">
