@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>B2 Revestimientos — Tienda online</title>
+<meta name="description" content="B2 Revestimientos: porcelanatos y mosaicos para revestimientos. Armá tu pedido y envialo por WhatsApp." />
+<link rel="icon" href="logo.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #fcf9f2; --surface: #f4efe5; --ink: #2a2a2a; --muted: #8a857c;
+  --line: #e2dccf; --wa: #25d366;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --sans: "Public Sans", system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--sans); background: var(--bg); color: var(--ink); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+img { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+input, textarea { font: inherit; color: inherit; }
+a { color: inherit; text-decoration: none; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+.mono { font-family: var(--mono); text-transform: uppercase; letter-spacing: .04em; }
+
+/* Header */
+header { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); }
+.nav { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 16px; }
+.logo img { height: 30px; width: auto; }
+.nav-links { display: flex; gap: 32px; font-size: 13px; }
+.nav-links a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.cart-btn { font-size: 13px; display: flex; align-items: center; gap: 6px; }
+.cart-count { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 5px; border: 1px solid var(--ink); font-size: 11px; }
+
+/* Hero: grilla de obra con cruces, eco del trazo del logo */
+.hero { position: relative; height: min(72vh, 620px); border-bottom: 1px solid var(--line); overflow: hidden;
+  /* Baldosa 200×200: líneas cada 100px y una cruz en cada otra intersección */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cpath d='M50.5 0v200M150.5 0v200M0 50.5h200M0 150.5h200' stroke='%23e2dccf'/%3E%3Cpath d='M50.5 43v15M43 50.5h15' stroke='%232a2a2a' stroke-opacity='.55'/%3E%3C/svg%3E");
+  background-size: 200px 200px; background-position: center; }
+.hero-centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; text-align: center; padding: 16px; }
+.hero-logo { width: min(300px, 55vw); background: var(--bg); padding: 28px; }
+.hero-bajada { font-size: 13px; background: var(--bg); padding: 4px 10px; }
+.hero-cta { font-size: 13px; border: 1px solid var(--ink); padding: 12px 22px; background: var(--bg); }
+.hero-cta:hover { background: var(--ink); color: var(--bg); }
+
+/* Catálogo */
+.titulo { text-align: center; font-size: clamp(26px, 4vw, 36px); font-weight: 500; padding: 72px 0 28px; }
+.filtros { display: flex; flex-direction: column; align-items: center; gap: 18px; margin-bottom: 40px; }
+.chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 26px; font-size: 13px; }
+.chip { font-family: var(--mono); text-transform: uppercase; letter-spacing: .04em; padding: 4px 0; border-bottom: 1px solid transparent; color: var(--muted); }
+.chip.on, .chip:hover { color: var(--ink); border-color: var(--ink); }
+.buscar { width: min(360px, 100%); padding: 10px 2px; border: 0; border-bottom: 1px solid var(--line); background: transparent; text-align: center; outline: none; }
+.buscar:focus { border-color: var(--ink); }
+
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 56px 12px; padding-bottom: 96px; }
+.card { display: flex; flex-direction: column; text-align: center; }
+.card-img { aspect-ratio: 1; background: var(--surface); display: grid; place-items: center; overflow: hidden; }
+.card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+.card:hover .card-img img { transform: scale(1.03); }
+.card-img-vacia { width: 45%; opacity: .25; }
+.card-body { padding: 18px 8px 0; display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+.card-linea { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.card-nombre { font-weight: 500; font-size: 16px; }
+.card-detalle { font-size: 13px; color: var(--muted); }
+.card-meta { margin-top: 8px; }
+.precio { font-family: var(--mono); font-size: 15px; }
+.precio small { font-size: 11px; color: var(--muted); }
+.agregar, .qty { margin-top: 14px; width: 100%; max-width: 220px; height: 42px; border: 1px solid var(--ink); font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+.agregar:hover { background: var(--ink); color: var(--bg); }
+.qty { display: flex; align-items: center; justify-content: space-between; background: var(--ink); color: var(--bg); }
+.qty button { width: 44px; height: 100%; font-size: 18px; }
+.estado { padding: 64px 0; text-align: center; color: var(--muted); grid-column: 1 / -1; }
+
+/* Carrito */
+.overlay { position: fixed; inset: 0; background: rgba(42,42,42,.35); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 40; }
+.overlay.on { opacity: 1; pointer-events: auto; }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(440px, 100%); background: var(--bg); z-index: 50; transform: translateX(100%); transition: transform .3s; display: flex; flex-direction: column; border-left: 1px solid var(--line); }
+.drawer.on { transform: none; }
+.drawer-head { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; height: 68px; border-bottom: 1px solid var(--line); }
+.drawer-head h2 { font-family: var(--mono); font-weight: 400; font-size: 15px; text-transform: uppercase; letter-spacing: .06em; }
+.cerrar { font-size: 26px; line-height: 1; padding: 4px; font-weight: 300; }
+.drawer-items { flex: 1; overflow-y: auto; padding: 0 20px; }
+.item { display: grid; grid-template-columns: 60px 1fr auto; gap: 14px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.item-img { width: 60px; height: 60px; object-fit: cover; background: var(--surface); }
+.item-nombre { font-weight: 500; font-size: 14px; }
+.item-sub { font-size: 12px; color: var(--muted); }
+.item .qty { margin: 0; width: 96px; height: 34px; }
+.item .qty button { width: 30px; font-size: 15px; }
+.drawer-foot { padding: 18px 20px 20px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
+.total { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 15px; text-transform: uppercase; }
+.nota-precio { font-size: 12px; color: var(--muted); }
+.drawer-foot input, .drawer-foot textarea { width: 100%; padding: 10px 0; border: 0; border-bottom: 1px solid var(--line); background: transparent; outline: none; }
+.drawer-foot input:focus, .drawer-foot textarea:focus { border-color: var(--ink); }
+.btn-wa { margin-top: 6px; background: var(--ink); color: var(--bg); height: 50px; font-family: var(--mono); font-size: 13px; text-transform: uppercase; letter-spacing: .06em; }
+.btn-wa:hover { background: #000; }
+.btn-wa:disabled { opacity: .35; cursor: not-allowed; }
+
+/* Footer */
+footer { border-top: 1px solid var(--line); padding: 40px 0; font-size: 12px; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 20px 40px; justify-content: space-between; align-items: center; }
+footer img { height: 24px; }
+footer a:hover { text-decoration: underline; }
+
+.wa-flotante { position: fixed; right: 18px; bottom: 18px; width: 54px; height: 54px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 6px 20px rgba(0,0,0,.15); z-index: 30; }
+
+@media (max-width: 820px) {
+  .nav-links { display: none; }
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 36px 10px; }
+  .hero { height: 58vh; background-size: 140px 140px; }
+  .card-nombre { font-size: 14px; }
+  .titulo { padding-top: 52px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="./" aria-label="B2 Revestimientos"><img src="logo.svg" alt="B2" /></a>
+    <nav class="nav-links mono">
+      <a href="#catalogo">Productos</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <button class="cart-btn mono" onclick="abrirCarrito()" aria-label="Ver pedido">
+      Pedido <span class="cart-count" id="cart-count">0</span>
+    </button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-centro">
+    <img class="hero-logo" src="logo.svg" alt="B2 Revestimientos" />
+    <div class="hero-bajada mono">Revestimientos · Porcelanato · Mosaicos</div>
+    <a class="hero-cta mono" href="#catalogo">Ver productos</a>
+  </div>
+</section>
+
+<main class="wrap" id="catalogo">
+  <h1 class="titulo mono">Productos</h1>
+  <div class="filtros">
+    <div class="chips" id="chips"></div>
+    <input class="buscar" id="buscar" type="search" placeholder="Buscar modelo o código" oninput="render()" />
+  </div>
+  <div class="grid" id="grid"><div class="estado">Cargando catálogo…</div></div>
+</main>
+
+<footer id="contacto">
+  <div class="wrap mono">
+    <img src="logo.svg" alt="B2" />
+    <a id="footer-wa" href="#" target="_blank" rel="noopener"></a>
+    <span>Pedidos por WhatsApp</span>
+    <span>Precios en pesos, sujetos a confirmación</span>
+  </div>
+</footer>
+
+<a class="wa-flotante" id="wa-flotante" href="#" target="_blank" rel="noopener" aria-label="Escribinos por WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
+</a>
+
+<div class="overlay" id="overlay" onclick="cerrarCarrito()"></div>
+<aside class="drawer" id="drawer" aria-label="Tu pedido">
+  <div class="drawer-head">
+    <h2>Tu pedido</h2>
+    <button class="cerrar" onclick="cerrarCarrito()" aria-label="Cerrar">×</button>
+  </div>
+  <div class="drawer-items" id="drawer-items"></div>
+  <div class="drawer-foot">
+    <div class="total"><span>Total estimado</span><span id="total">$0</span></div>
+    <div class="nota-precio">Precio orientativo. Envío y forma de pago se coordinan por WhatsApp.</div>
+    <input id="cli-nombre" placeholder="Tu nombre" autocomplete="name" />
+    <input id="cli-localidad" placeholder="Localidad / provincia" autocomplete="address-level2" />
+    <textarea id="cli-nota" rows="2" placeholder="Comentarios (opcional)"></textarea>
+    <button class="btn-wa" id="btn-wa" onclick="enviarWhatsApp()">Enviar pedido por WhatsApp</button>
+  </div>
+</aside>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+// ── CONFIGURACIÓN ─────────────────────────────────────────────
+// ⚠️ Número de WhatsApp de ventas: código de país + área sin 0 + número sin 15 (ej: 5493511234567)
+const WHATSAPP = '5491169566059';
+
+// Proyecto modelar-saas, empresa B2 Revestimientos. La tienda lee tiendas/{EMPRESA_ID}/productos,
+// que se publica desde la app (Costos → Productos → "Tienda web" → Publicar) sin costos ni proveedor.
+const EMPRESA_ID = 'YfNYSFmj9Ix8iL4vCN31';
+const firebaseConfig = {
+  apiKey: "AIzaSyB-ZtFoJP2Y2Z652EFkay1Dn3pRCgDeMx4",
+  authDomain: "modelar-saas.firebaseapp.com",
+  projectId: "modelar-saas",
+  storageBucket: "modelar-saas.firebasestorage.app",
+  messagingSenderId: "83351579804",
+  appId: "1:83351579804:web:091d81bbf5533b479dd159"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// ── ESTADO ────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+let productos = [];
+let lineaActiva = 'Todos';
+let carrito = {}; // { productoId: cajas }
+try { carrito = JSON.parse(localStorage.getItem('b2-carrito') || '{}'); } catch (e) {}
+
+const pesos = n => '$' + Math.round(n || 0).toLocaleString('es-AR');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const normNombre = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim();
+const prodById = id => productos.find(p => p.id === id);
+// Precio por caja: se vende por caja entera; si falta m²/caja se toma 1 m²
+const precioCaja = p => (p.precio_m2 || 0) * (p.m2_por_caja || 1);
+// Categoría = primer tramo de la descripción ("Porcelanato · pieza 22x145 mm · …")
+const lineaDe = p => (p.descripcion || '').split('·')[0].trim() || 'Otros';
+
+function guardarCarrito() {
+  try { localStorage.setItem('b2-carrito', JSON.stringify(carrito)); } catch (e) {}
+}
+
+// ── CATÁLOGO ──────────────────────────────────────────────────
+async function cargarProductos() {
+  try {
+    const snap = await db.collection('tiendas').doc(EMPRESA_ID).collection('productos').get();
+    productos = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(p => p.web !== false && p.nombre && p.precio_m2 > 0)
+      .sort((a, b) => (a.sku || a.nombre).localeCompare(b.sku || b.nombre, 'es', { numeric: true }));
+    // Descarta del carrito productos que ya no existen
+    Object.keys(carrito).forEach(id => { if (!prodById(id)) delete carrito[id]; });
+    guardarCarrito();
+    renderChips(); render(); renderCarrito();
+  } catch (e) {
+    console.error('Error cargando productos:', e);
+    $('grid').innerHTML = '<div class="estado">No pudimos cargar el catálogo. Escribinos por WhatsApp y te pasamos la lista de precios.</div>';
+  }
+}
+
+function renderChips() {
+  const lineas = ['Todos', ...new Set(productos.map(lineaDe))];
+  if (lineas.length <= 2) { $('chips').innerHTML = ''; return; }
+  $('chips').innerHTML = lineas.map(l =>
+    `<button class="chip${l === lineaActiva ? ' on' : ''}" onclick="setLinea('${esc(l).replace(/'/g, '&#39;')}')">${esc(l)}</button>`
+  ).join('');
+}
+function setLinea(l) { lineaActiva = l; renderChips(); render(); }
+
+function controlCantidad(id, cant) {
+  return `<div class="qty"><button onclick="cambiar('${id}',-1)" aria-label="Quitar uno">−</button><span>${cant}</span><button onclick="cambiar('${id}',1)" aria-label="Agregar uno">+</button></div>`;
+}
+
+function render() {
+  const q = normNombre($('buscar').value);
+  const lista = productos.filter(p =>
+    (lineaActiva === 'Todos' || lineaDe(p) === lineaActiva) &&
+    (!q || normNombre(p.nombre + ' ' + (p.sku || '') + ' ' + (p.descripcion || '')).includes(q))
+  );
+  if (!productos.length) { $('grid').innerHTML = '<div class="estado">Estamos cargando el catálogo. Escribinos por WhatsApp y te pasamos la lista de precios.</div>'; return; }
+  if (!lista.length) { $('grid').innerHTML = '<div class="estado">No encontramos productos con ese filtro.</div>'; return; }
+  $('grid').innerHTML = lista.map(p => {
+    const cant = carrito[p.id] || 0;
+    const medidas = [p.medida_pieza && 'Pieza ' + p.medida_pieza, p.medida_malla && 'Malla ' + p.medida_malla].filter(Boolean).join(' · ');
+    const caja = [p.m2_por_caja && p.m2_por_caja + ' m²/caja', p.piezas_por_caja && p.piezas_por_caja + ' mallas'].filter(Boolean).join(' · ');
+    return `<article class="card">
+      <div class="card-img">${p.foto ? `<img src="${p.foto}" alt="${esc(p.nombre)}" loading="lazy" />` : '<img class="card-img-vacia" src="logo.svg" alt="" />'}</div>
+      <div class="card-body">
+        <div class="card-linea">${esc(p.sku || lineaDe(p))}</div>
+        <div class="card-nombre">${esc(p.nombre.replace(p.sku || '\u0000', '').trim())}</div>
+        ${medidas ? `<div class="card-detalle">${esc(medidas)}</div>` : ''}
+        ${caja ? `<div class="card-detalle">${esc(caja)}</div>` : ''}
+        <div class="card-meta">
+          <span class="precio">${p.precio_m2 ? pesos(p.precio_m2) + ' <small>/ m²</small>' : 'Consultar'}</span>
+        </div>
+        ${cant ? controlCantidad(p.id, cant) : `<button class="agregar" onclick="cambiar('${p.id}',1)">Agregar caja</button>`}
+      </div>
+    </article>`;
+  }).join('');
+}
+
+// ── CARRITO ───────────────────────────────────────────────────
+function cambiar(id, delta) {
+  const n = (carrito[id] || 0) + delta;
+  if (n > 0) carrito[id] = n; else delete carrito[id];
+  guardarCarrito(); render(); renderCarrito();
+}
+
+function itemsCarrito() {
+  return Object.entries(carrito).map(([id, cant]) => ({ p: prodById(id), cant })).filter(i => i.p);
+}
+
+function renderCarrito() {
+  const items = itemsCarrito();
+  $('cart-count').textContent = items.reduce((s, i) => s + i.cant, 0);
+  $('total').textContent = pesos(items.reduce((s, i) => s + i.cant * precioCaja(i.p), 0));
+  $('btn-wa').disabled = !items.length;
+  $('drawer-items').innerHTML = items.length ? items.map(({ p, cant }) => {
+    const m2 = p.m2_por_caja ? ` · ${+(cant * p.m2_por_caja).toFixed(2)} m²` : '';
+    return `<div class="item">
+      ${p.foto ? `<img class="item-img" src="${p.foto}" alt="" />` : '<div class="item-img"></div>'}
+      <div><div class="item-nombre">${esc(p.nombre)}</div><div class="item-sub">${cant} caja${cant > 1 ? 's' : ''}${m2}${p.precio_m2 ? ' · ' + pesos(precioCaja(p)) + '/caja' : ''}</div></div>
+      ${controlCantidad(p.id, cant)}
+    </div>`;
+  }).join('') : '<div class="estado">Todavía no agregaste productos.</div>';
+}
+
+function abrirCarrito() { $('overlay').classList.add('on'); $('drawer').classList.add('on'); }
+function cerrarCarrito() { $('overlay').classList.remove('on'); $('drawer').classList.remove('on'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarCarrito(); });
+
+function enviarWhatsApp() {
+  const items = itemsCarrito();
+  if (!items.length) return;
+  const nombre = $('cli-nombre').value.trim();
+  const localidad = $('cli-localidad').value.trim();
+  const nota = $('cli-nota').value.trim();
+  const total = items.reduce((s, i) => s + i.cant * precioCaja(i.p), 0);
+  const lineas = [
+    '¡Hola B2 Revestimientos! Quiero hacer este pedido:',
+    '',
+    ...items.map(({ p, cant }) => `• ${cant} caja${cant > 1 ? 's' : ''} ${p.nombre}${p.m2_por_caja ? ` (${+(cant * p.m2_por_caja).toFixed(2)} m²)` : ''}${p.precio_m2 ? ' — ' + pesos(precioCaja(p) * cant) : ''}`),
+    '',
+    `Total estimado: ${pesos(total)}`,
+    nombre ? `Nombre: ${nombre}` : null,
+    localidad ? `Localidad: ${localidad}` : null,
+    nota ? `Comentarios: ${nota}` : null
+  ].filter(l => l !== null);
+  window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(lineas.join('\n'))}`, '_blank');
+}
+
+// ── INICIO ────────────────────────────────────────────────────
+const waLink = `https://wa.me/${WHATSAPP}`;
+$('wa-flotante').href = waLink;
+$('footer-wa').href = waLink;
+$('footer-wa').textContent = '+' + WHATSAPP;
+renderCarrito();
+cargarProductos();
+</script>
+</body>
+</html>
