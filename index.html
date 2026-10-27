@@ -23,14 +23,36 @@ button { font: inherit; cursor: pointer; border: 0; background: none; color: inh
 input, textarea { font: inherit; color: inherit; }
 a { color: inherit; text-decoration: none; }
 .wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+html { scroll-behavior: smooth; }
+#catalogo, #nosotros, #contacto { scroll-margin-top: 68px; }
 .mono { font-family: var(--mono); text-transform: uppercase; letter-spacing: .04em; }
 
 /* Header */
 header { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); }
 .nav { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 16px; }
 .logo img { height: 30px; width: auto; }
-.nav-links { display: flex; gap: 32px; font-size: 13px; }
+.nav-links { display: flex; gap: 32px; font-size: 13px; align-self: stretch; }
+.nav-links > a, .nav-item > a { display: flex; align-items: center; height: 100%; }
 .nav-links a:hover { text-decoration: underline; text-underline-offset: 4px; }
+/* Desplegable de líneas al pasar sobre "Productos" */
+.nav-item { position: relative; }
+.submenu { position: absolute; top: 100%; left: -20px; min-width: 240px; background: var(--bg); border: 1px solid var(--line); padding: 10px 0;
+  opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity .15s, transform .15s, visibility .15s; }
+.nav-item:hover .submenu, .nav-item:focus-within .submenu { opacity: 1; visibility: visible; transform: none; }
+.submenu button { display: block; width: 100%; text-align: left; padding: 8px 20px; font-family: var(--sans); font-size: 14px; font-weight: 500; text-transform: none; letter-spacing: 0; }
+.submenu button:hover { background: var(--surface); }
+.submenu .todos { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.menu-btn { display: none; width: 28px; height: 20px; position: relative; }
+.menu-btn span { position: absolute; left: 0; right: 0; height: 1px; background: var(--ink); }
+.menu-btn span:nth-child(1) { top: 2px; } .menu-btn span:nth-child(2) { top: 10px; } .menu-btn span:nth-child(3) { top: 18px; }
+/* Menú lateral en celular */
+.menu-movil { position: fixed; top: 0; left: 0; bottom: 0; width: min(320px, 85%); background: var(--bg); z-index: 50; transform: translateX(-100%); transition: transform .3s; border-right: 1px solid var(--line); overflow-y: auto; padding: 0 20px 24px; }
+.menu-movil.on { transform: none; }
+.menu-movil .drawer-head { padding: 0; margin-bottom: 8px; }
+.menu-movil h3 { font-size: 12px; color: var(--muted); font-weight: 400; margin: 18px 0 6px; }
+.menu-movil button, .menu-movil a { display: block; width: 100%; text-align: left; padding: 9px 0; font-size: 15px; font-weight: 500; }
+.menu-movil .cerrar { width: auto; padding: 4px; font-size: 26px; font-weight: 300; }
+.menu-movil .mono-link { font-family: var(--mono); text-transform: uppercase; letter-spacing: .04em; font-size: 14px; font-weight: 400; border-top: 1px solid var(--line); padding: 14px 0; margin-top: 8px; }
 .cart-btn { font-size: 13px; display: flex; align-items: center; gap: 6px; }
 .cart-count { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 5px; border: 1px solid var(--ink); font-size: 11px; }
 
@@ -107,8 +129,33 @@ footer a:hover { text-decoration: underline; }
 
 .wa-flotante { position: fixed; right: 18px; bottom: 18px; width: 54px; height: 54px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 6px 20px rgba(0,0,0,.15); z-index: 30; }
 
+/* Sobre nosotros: texto a la izquierda, slider de obras a la derecha */
+.nosotros { border-top: 1px solid var(--line); padding: 88px 0 96px; }
+.nosotros-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 64px; align-items: start; }
+.nosotros h2 { font-size: clamp(26px, 4vw, 36px); font-weight: 500; margin-bottom: 28px; }
+.nosotros .lema { font-size: clamp(20px, 2.4vw, 26px); line-height: 1.3; font-weight: 500; margin-bottom: 24px; }
+.nosotros ul { list-style: none; margin-bottom: 28px; font-size: 13px; display: flex; flex-direction: column; gap: 6px; }
+.nosotros ul li::before { content: "+ "; color: var(--muted); }
+.nosotros p { color: #4a4740; margin-bottom: 16px; max-width: 520px; }
+.nosotros .mision { color: var(--ink); font-weight: 500; }
+.slider { position: relative; aspect-ratio: 4 / 5; background: var(--surface); overflow: hidden; touch-action: pan-y; }
+.slides { display: flex; height: 100%; transition: transform .6s ease; }
+.slide { flex: 0 0 100%; height: 100%; display: grid; place-items: center; }
+.slide img { width: 100%; height: 100%; object-fit: cover; }
+.slide .card-img-vacia { width: 30%; height: auto; }
+.slider-flecha { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; background: var(--bg); border: 1px solid var(--ink); font-size: 18px; display: grid; place-items: center; }
+.slider-flecha.ant { left: 14px; } .slider-flecha.sig { right: 14px; }
+.slider-flecha:hover { background: var(--ink); color: var(--bg); }
+.slider-pie { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 12px; }
+.puntos { display: flex; gap: 6px; }
+.puntos button { width: 22px; height: 2px; background: var(--line); }
+.puntos button.on { background: var(--ink); }
+
 @media (max-width: 820px) {
   .nav-links { display: none; }
+  .menu-btn { display: block; }
+  .nosotros { padding: 56px 0 64px; }
+  .nosotros-grid { grid-template-columns: 1fr; gap: 36px; }
   .grid { grid-template-columns: repeat(2, 1fr); gap: 36px 10px; }
   .hero { height: 58vh; background-size: 140px 140px; }
   .card-nombre { font-size: 14px; }
@@ -120,9 +167,14 @@ footer a:hover { text-decoration: underline; }
 
 <header>
   <div class="wrap nav">
+    <button class="menu-btn" onclick="abrirMenu()" aria-label="Abrir menú"><span></span><span></span><span></span></button>
     <a class="logo" href="./" aria-label="B2 Revestimientos"><img src="logo.svg" alt="B2" /></a>
     <nav class="nav-links mono">
-      <a href="#catalogo">Productos</a>
+      <div class="nav-item">
+        <a href="#catalogo" onclick="irALinea('Todos')">Productos</a>
+        <div class="submenu" id="submenu-lineas"></div>
+      </div>
+      <a href="#nosotros">Sobre nosotros</a>
       <a href="#contacto">Contacto</a>
     </nav>
     <button class="cart-btn mono" onclick="abrirCarrito()" aria-label="Ver pedido">
@@ -148,6 +200,31 @@ footer a:hover { text-decoration: underline; }
   <div class="grid" id="grid"><div class="estado">Cargando catálogo…</div></div>
 </main>
 
+<section class="nosotros" id="nosotros">
+  <div class="wrap nosotros-grid">
+    <div>
+      <h2 class="mono">Sobre nosotros</h2>
+      <p class="lema">Nos replanteamos la forma de diseñar, producir y vender.</p>
+      <ul class="mono">
+        <li>B2 Calcáreos geométricos</li>
+        <li>B2 Revestimientos graníticos</li>
+      </ul>
+      <p>Creemos en la retroalimentación entre profesionales del diseño y de la industria para desarrollar productos de alta calidad que apuesten a la industria local.</p>
+      <p class="mision">Nuestra misión es crear revestimientos 100% industria argentina.</p>
+      <p>Tanto los calcáreos como los graníticos pulidos están fabricados con cemento, marmolina, distintos tipos de granito y pigmentos. La fabricación de estos productos es totalmente artesanal y, dada esta particularidad, ninguna pieza es igual a otra: pueden producirse variaciones en el color y en el espesor, pero nunca en el tamaño, haciendo de cada uno de ellos un elemento único.</p>
+      <p>Ofrecemos graníticos pulidos y calcáreos duraderos, accesibles y de gran calidad, que responden a las demandas e inspiran al sector creativo.</p>
+    </div>
+    <div>
+      <div class="slider" id="slider">
+        <div class="slides" id="slides"></div>
+        <button class="slider-flecha ant" onclick="moverSlider(-1)" aria-label="Foto anterior">←</button>
+        <button class="slider-flecha sig" onclick="moverSlider(1)" aria-label="Foto siguiente">→</button>
+      </div>
+      <div class="slider-pie mono"><span>Nuestras obras</span><div class="puntos" id="puntos"></div></div>
+    </div>
+  </div>
+</section>
+
 <footer id="contacto">
   <div class="wrap mono">
     <img src="logo.svg" alt="B2" />
@@ -161,7 +238,18 @@ footer a:hover { text-decoration: underline; }
   <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
 </a>
 
-<div class="overlay" id="overlay" onclick="cerrarCarrito()"></div>
+<nav class="menu-movil" id="menu-movil" aria-label="Menú">
+  <div class="drawer-head">
+    <h2>Menú</h2>
+    <button class="cerrar" onclick="cerrarMenu()" aria-label="Cerrar">×</button>
+  </div>
+  <h3 class="mono">Productos</h3>
+  <div id="menu-movil-lineas"></div>
+  <a class="mono-link" href="#nosotros" onclick="cerrarMenu()">Sobre nosotros</a>
+  <a class="mono-link" href="#contacto" onclick="cerrarMenu()">Contacto</a>
+</nav>
+
+<div class="overlay" id="overlay" onclick="cerrarCarrito(); cerrarMenu()"></div>
 <aside class="drawer" id="drawer" aria-label="Tu pedido">
   <div class="drawer-head">
     <h2>Tu pedido</h2>
@@ -214,6 +302,8 @@ const prodById = id => productos.find(p => p.id === id);
 const precioCaja = p => (p.precio_m2 || 0) * (p.m2_por_caja || 1);
 // Línea asignada en la app (ej. "Stackbond"); si no tiene, el primer tramo de la descripción ("Porcelanato · pieza …")
 const lineaDe = p => (p.linea || '').trim() || (p.descripcion || '').split('·')[0].trim() || 'Otros';
+// Líneas en orden alfabético, con "Otros" al final
+const lineasDe = lista => [...new Set(lista.map(lineaDe))].sort((a, b) => (a === 'Otros') - (b === 'Otros') || a.localeCompare(b, 'es', { numeric: true }));
 
 function guardarCarrito() {
   try { localStorage.setItem('b2-carrito', JSON.stringify(carrito)); } catch (e) {}
@@ -237,8 +327,26 @@ async function cargarProductos() {
   }
 }
 
+// Menú de líneas: desplegable de "Productos" en escritorio y menú lateral en celular
+function renderMenuLineas() {
+  const lineas = lineasDe(productos);
+  const boton = (l, txt, clase = '') => `<button class="${clase}" onclick="irALinea('${esc(l).replace(/'/g, '&#39;')}')">${esc(txt)}</button>`;
+  const items = lineas.map(l => boton(l, l)).join('');
+  $('submenu-lineas').innerHTML = boton('Todos', 'Ver todos', 'todos') + items;
+  $('menu-movil-lineas').innerHTML = boton('Todos', 'Ver todos') + items;
+}
+function irALinea(l) {
+  lineaActiva = l; $('buscar').value = '';
+  renderChips(); render(); cerrarMenu();
+  document.activeElement?.blur(); // cierra el desplegable, que se abre con :focus-within
+  $('catalogo').scrollIntoView({ behavior: 'smooth' });
+}
+function abrirMenu() { $('overlay').classList.add('on'); $('menu-movil').classList.add('on'); }
+function cerrarMenu() { $('menu-movil').classList.remove('on'); if (!$('drawer').classList.contains('on')) $('overlay').classList.remove('on'); }
+
 function renderChips() {
-  const lineas = ['Todos', ...new Set(productos.map(lineaDe))];
+  renderMenuLineas();
+  const lineas = ['Todos', ...lineasDe(productos)];
   if (lineas.length <= 2) { $('chips').innerHTML = ''; return; }
   $('chips').innerHTML = lineas.map(l =>
     `<button class="chip${l === lineaActiva ? ' on' : ''}" onclick="setLinea('${esc(l).replace(/'/g, '&#39;')}')">${esc(l)}</button>`
@@ -260,7 +368,7 @@ function render() {
   if (!lista.length) { $('grid').innerHTML = '<div class="estado">No encontramos productos con ese filtro.</div>'; return; }
   // En "Todos" sin búsqueda, los productos van agrupados por línea con su título
   const agrupar = lineaActiva === 'Todos' && !q && new Set(lista.map(lineaDe)).size > 1;
-  const lineas = agrupar ? [...new Set(lista.map(lineaDe))] : [null];
+  const lineas = agrupar ? lineasDe(lista) : [null];
   $('grid').innerHTML = lineas.map(l =>
     (l ? `<h2 class="linea-titulo mono">${esc(l)}</h2>` : '') +
     lista.filter(p => !l || lineaDe(p) === l).map(tarjeta).join('')
@@ -314,7 +422,41 @@ function renderCarrito() {
 
 function abrirCarrito() { $('overlay').classList.add('on'); $('drawer').classList.add('on'); }
 function cerrarCarrito() { $('overlay').classList.remove('on'); $('drawer').classList.remove('on'); }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarCarrito(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { cerrarCarrito(); cerrarMenu(); } });
+
+// ── SLIDER DE OBRAS ───────────────────────────────────────────
+// Fotos de obras: copiarlas a la carpeta obras/ y listarlas acá, en el orden en que se muestran
+const OBRAS = [
+  'obras/obra-1.jpg', 'obras/obra-5.jpg', 'obras/obra-4.jpg',
+  'obras/obra-3.jpg', 'obras/obra-6.jpg', 'obras/obra-2.jpg'
+];
+let slideActual = 0, sliderTimer = null;
+function renderSlider() {
+  const fotos = OBRAS.length ? OBRAS : [null];
+  $('slides').innerHTML = fotos.map((f, i) => `<div class="slide">${f
+    ? `<img src="${f}" alt="Obra de B2 Revestimientos ${i + 1}" ${i ? 'loading="lazy"' : ''} />`
+    : '<img class="card-img-vacia" src="logo.svg" alt="" />'}</div>`).join('');
+  $('puntos').innerHTML = fotos.length > 1 ? fotos.map((_, i) => `<button onclick="irASlide(${i})" aria-label="Foto ${i + 1}"></button>`).join('') : '';
+  document.querySelectorAll('.slider-flecha').forEach(b => b.style.display = fotos.length > 1 ? '' : 'none');
+  irASlide(0);
+}
+function irASlide(i) {
+  const n = Math.max(OBRAS.length, 1);
+  slideActual = (i + n) % n;
+  $('slides').style.transform = `translateX(-${slideActual * 100}%)`;
+  document.querySelectorAll('#puntos button').forEach((b, j) => b.classList.toggle('on', j === slideActual));
+  clearTimeout(sliderTimer);
+  if (n > 1) sliderTimer = setTimeout(() => irASlide(slideActual + 1), 5000);
+}
+function moverSlider(d) { irASlide(slideActual + d); }
+// Deslizar con el dedo en celular
+let toqueX = null;
+$('slider').addEventListener('touchstart', e => { toqueX = e.touches[0].clientX; }, { passive: true });
+$('slider').addEventListener('touchend', e => {
+  if (toqueX === null) return;
+  const dx = e.changedTouches[0].clientX - toqueX; toqueX = null;
+  if (Math.abs(dx) > 40) moverSlider(dx < 0 ? 1 : -1);
+});
 
 function enviarWhatsApp() {
   const items = itemsCarrito();
@@ -342,6 +484,7 @@ $('wa-flotante').href = waLink;
 $('footer-wa').href = waLink;
 $('footer-wa').textContent = '+' + WHATSAPP;
 renderCarrito();
+renderSlider();
 cargarProductos();
 </script>
 </body>
