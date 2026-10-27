@@ -76,7 +76,7 @@ header { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bo
 .buscar { width: min(360px, 100%); padding: 10px 2px; border: 0; border-bottom: 1px solid var(--line); background: transparent; text-align: center; outline: none; }
 .buscar:focus { border-color: var(--ink); }
 
-.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 56px 12px; padding-bottom: 96px; }
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 56px 12px; padding-bottom: 96px; }
 .linea-titulo { grid-column: 1 / -1; font-weight: 400; font-size: 18px; padding-bottom: 14px; margin-bottom: -26px; border-bottom: 1px solid var(--line); }
 .linea-titulo:not(:first-child) { margin-top: 24px; }
 .card { display: flex; flex-direction: column; text-align: center; }
@@ -157,7 +157,7 @@ body.en-ficha .hero, body.en-ficha .nosotros, body.en-ficha #catalogo { display:
 body.en-ficha .ficha { display: block; }
 .migas { font-size: 12px; color: var(--muted); margin-bottom: 28px; }
 .migas a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
-.ficha-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; align-items: start; }
+.ficha-grid { display: grid; grid-template-columns: minmax(0, 440px) 1fr; gap: 56px; align-items: start; }
 .galeria { display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: start; }
 .galeria.una { grid-template-columns: 1fr; }
 .miniaturas { display: flex; flex-direction: column; gap: 10px; }
@@ -198,6 +198,7 @@ a.card-img, .card-nombre a { cursor: pointer; }
   .titulo { padding-top: 52px; }
   .ficha { padding-top: 24px; }
   .ficha-grid { grid-template-columns: 1fr; gap: 28px; }
+  .galeria { width: 100%; max-width: 420px; }
   .ficha-info { border-left: 0; padding-left: 0; }
   .ficha-acciones { max-width: none; }
   .galeria { grid-template-columns: 1fr; }
@@ -516,7 +517,7 @@ function renderFicha() {
     ['Peso por caja', p.peso_kg_caja && p.peso_kg_caja + ' kg']
   ].filter(d => d[1]);
   const consulta = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`¡Hola B2 Revestimientos! Quiero consultar por ${p.nombre}: ${location.origin + location.pathname + urlProducto(p)}`)}`;
-  const otros = productos.filter(x => x.id !== p.id && lineaDe(x) === l).slice(0, 3);
+  const otros = productos.filter(x => x.id !== p.id && lineaDe(x) === l).slice(0, 4);
   $('ficha').innerHTML = `
     <nav class="migas mono"><a href="./#catalogo">Productos</a> / <a href="./#catalogo" onclick="irALinea('${esc(l).replace(/'/g, '&#39;')}'); return false">${esc(l)}</a></nav>
     <div class="ficha-grid">
