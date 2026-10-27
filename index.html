@@ -158,7 +158,14 @@ body.en-ficha .ficha { display: block; }
 .migas { font-size: 12px; color: var(--muted); margin-bottom: 28px; }
 .migas a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 .ficha-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; align-items: start; }
-.ficha-img { aspect-ratio: 1; background: var(--surface); display: grid; place-items: center; overflow: hidden; }
+.galeria { display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: start; }
+.galeria.una { grid-template-columns: 1fr; }
+.miniaturas { display: flex; flex-direction: column; gap: 10px; }
+.miniaturas button { aspect-ratio: 1; background: var(--surface); opacity: .55; border: 1px solid transparent; transition: opacity .15s; }
+.miniaturas button:hover { opacity: 1; }
+.miniaturas button.on { opacity: 1; border-color: var(--ink); }
+.miniaturas img { width: 100%; height: 100%; object-fit: cover; }
+.ficha-img { aspect-ratio: 1; background: var(--surface); display: grid; place-items: center; overflow: hidden; touch-action: pan-y; }
 .ficha-img img { width: 100%; height: 100%; object-fit: cover; }
 .ficha-info { border-left: 1px solid var(--line); padding-left: 40px; }
 .ficha-linea { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
@@ -193,6 +200,9 @@ a.card-img, .card-nombre a { cursor: pointer; }
   .ficha-grid { grid-template-columns: 1fr; gap: 28px; }
   .ficha-info { border-left: 0; padding-left: 0; }
   .ficha-acciones { max-width: none; }
+  .galeria { grid-template-columns: 1fr; }
+  .miniaturas { flex-direction: row; order: 2; overflow-x: auto; }
+  .miniaturas button { flex: 0 0 56px; }
 }
 </style>
 </head>
@@ -449,7 +459,43 @@ function verProducto(e, id) {
 }
 window.addEventListener('popstate', () => { renderFicha(); render(); });
 
+// Fotos adicionales: tiendas/{id}/fotos/{productoId}, se leen solo al abrir el producto
+const galerias = {};
+let fotoActual = 0;
+async function cargarGaleria(p) {
+  if (galerias[p.id] || !(p.cant_fotos > 1)) return;
+  galerias[p.id] = [p.foto];
+  try {
+    const d = await db.collection('tiendas').doc(EMPRESA_ID).collection('fotos').doc(p.id).get();
+    if (d.exists) galerias[p.id] = [p.foto, ...(d.data().fotos || [])];
+  } catch (e) { console.warn('No se pudieron cargar las fotos', e); }
+  if (slugActual() === slugDe(p)) renderGaleria(p);
+}
+const fotosDe = p => galerias[p.id] || (p.foto ? [p.foto] : []);
+function renderGaleria(p) {
+  const fotos = fotosDe(p);
+  fotoActual = Math.min(fotoActual, Math.max(fotos.length - 1, 0));
+  $('galeria').className = 'galeria' + (fotos.length > 1 ? '' : ' una');
+  $('galeria').innerHTML = (fotos.length > 1 ? `<div class="miniaturas">${fotos.map((f, i) =>
+      `<button class="${i === fotoActual ? 'on' : ''}" onclick="verFoto(${i})" aria-label="Foto ${i + 1}"><img src="${f}" alt="" /></button>`).join('')}</div>` : '') +
+    `<div class="ficha-img" id="ficha-img">${fotos.length ? `<img src="${fotos[fotoActual]}" alt="${esc(p.nombre)}" />` : '<img class="card-img-vacia" src="logo.svg" alt="" />'}</div>`;
+  // Deslizar con el dedo entre fotos
+  let x0 = null;
+  $('ficha-img').addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+  $('ficha-img').addEventListener('touchend', e => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if (Math.abs(dx) > 40 && fotos.length > 1) verFoto((fotoActual + (dx < 0 ? 1 : -1) + fotos.length) % fotos.length);
+  });
+}
+function verFoto(i) {
+  fotoActual = i;
+  const p = productos.find(x => slugDe(x) === slugActual());
+  if (p) renderGaleria(p);
+}
+
 const TITULO_INICIO = document.title;
+let fichaActual = null;
 function renderFicha() {
   const slug = slugActual();
   document.body.classList.toggle('en-ficha', !!slug);
@@ -462,6 +508,7 @@ function renderFicha() {
     return;
   }
   document.title = `${nombreCorto(p)} — B2 Revestimientos`;
+  if (fichaActual !== p.id) { fichaActual = p.id; fotoActual = 0; }
   const l = lineaDe(p), cant = carrito[p.id] || 0;
   const datos = [
     ['Medida pieza', p.medida_pieza], ['Medida malla', p.medida_malla],
@@ -473,7 +520,7 @@ function renderFicha() {
   $('ficha').innerHTML = `
     <nav class="migas mono"><a href="./#catalogo">Productos</a> / <a href="./#catalogo" onclick="irALinea('${esc(l).replace(/'/g, '&#39;')}'); return false">${esc(l)}</a></nav>
     <div class="ficha-grid">
-      <div class="ficha-img">${p.foto ? `<img src="${p.foto}" alt="${esc(p.nombre)}" />` : '<img class="card-img-vacia" src="logo.svg" alt="" />'}</div>
+      <div id="galeria"></div>
       <div class="ficha-info">
         <div class="ficha-linea">${esc(l)}</div>
         <h1 class="ficha-nombre">${esc(nombreCorto(p))}</h1>
@@ -489,6 +536,7 @@ function renderFicha() {
       </div>
     </div>
     ${otros.length ? `<div class="relacionados"><h2 class="mono">Más de ${esc(l)}</h2><div class="grid">${otros.map(tarjeta).join('')}</div></div>` : ''}`;
+  renderGaleria(p); cargarGaleria(p);
 }
 
 // ── CARRITO ───────────────────────────────────────────────────
